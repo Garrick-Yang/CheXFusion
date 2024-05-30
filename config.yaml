@@ -69,7 +69,7 @@ trainer:
   max_epochs: 1000
 model:
   lr: 3e-5
-  classes: 
+  classes:
   - Atelectasis
   - Calcification of the Aorta
   - Cardiomegaly
@@ -133,10 +133,10 @@ model:
 data:
   dataloader_init_args:
     batch_size: 8
-    num_workers: 8            
+    num_workers: 8
     pin_memory: true
     persistent_workers: true
-  datamodule_cfg: 
+  datamodule_cfg:
     predict_pseudo_label: null #chexpert
     use_pseudo_label: false #true
     data_dir: data
@@ -152,7 +152,7 @@ data:
     val_split: 0.1
     seed: 42
     size: 1024
-    classes: 
+    classes:
       - Atelectasis
       - Calcification of the Aorta
       - Cardiomegaly

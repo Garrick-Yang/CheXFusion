@@ -13,7 +13,7 @@ class Backbone(nn.Module):
         self.model = timm.create_model(**timm_init_args)
         self.model.head = nn.Identity()
         self.pos_encoding = Summer(PositionalEncoding2D(768))
-        self.head = MLDecoder(num_classes=26, initial_num_features=768)
+        self.head = MLDecoder(num_classes=40, initial_num_features=768)
 
     def forward(self, x):
         x = self.model(x)
@@ -26,7 +26,10 @@ class FusionBackbone(nn.Module):
     def __init__(self, timm_init_args, pretrained_path=None):
         super().__init__()
         self.model = timm.create_model(**timm_init_args)
-        self.model.head = MLDecoder(num_classes=26, initial_num_features=768)
+        local_weights_path = 'model_data/convnext_small.fb_in22k_ft_in1k/pytorch_model.bin'
+        self.model.load_state_dict(torch.load(local_weights_path))
+
+        self.model.head = MLDecoder(num_classes=40, initial_num_features=768)
         if pretrained_path is not None:
             self.model.load_state_dict(torch.load(pretrained_path))
         self.model.head = nn.Identity()
@@ -35,7 +38,7 @@ class FusionBackbone(nn.Module):
         self.padding_token = nn.Parameter(torch.randn(1, 768, 1, 1))
         self.segment_embedding = nn.Parameter(torch.randn(4, 768, 1, 1))
         
-        self.head = MLDecoder(num_classes=26, initial_num_features=768)
+        self.head = MLDecoder(num_classes=40, initial_num_features=768)
         self.transformer_encoder = nn.TransformerEncoder(nn.TransformerEncoderLayer(d_model=768, nhead=8), num_layers=2)
 
     def forward(self, x):
@@ -53,6 +56,8 @@ class FusionBackbone(nn.Module):
 
         pad_tokens = einops.repeat(self.padding_token, '1 c 1 1 -> (b s) c h w', b=b, s=s, h=x.shape[2], w=x.shape[3]).type_as(x)
         segment_embedding = einops.repeat(self.segment_embedding, 's c 1 1 -> (b s) c h w', b=b, h=x.shape[2], w=x.shape[3]).type_as(x)
+        # pad_tokens[no_pad] = x + segment_embedding[no_pad]
+        pad_tokens = pad_tokens.clone()
         pad_tokens[no_pad] = x + segment_embedding[no_pad]
         x = pad_tokens
 

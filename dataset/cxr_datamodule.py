@@ -66,6 +66,7 @@ class CxrDataModule(pl.LightningDataModule):
                 pred_df = pd.read_csv(self.cfg["pred_df_path"])
                 self.pred_dataset = CxrStudyIdDataset(self.cfg, pred_df, transforms_val)
 
+
     def train_dataloader(self):
         return DataLoader(self.train_dataset, **self.dataloader_init_args, shuffle=True)
 

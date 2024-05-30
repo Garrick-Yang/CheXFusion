@@ -4,6 +4,12 @@ data
 lightning_logs
 save
 model.pth
+model_data/
+
+
+output/save/
+
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

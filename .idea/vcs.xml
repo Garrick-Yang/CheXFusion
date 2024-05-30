@@ -2,5 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/model_data/convnext_small.fb_in22k_ft_in1k" vcs="Git" />
   </component>
 </project>

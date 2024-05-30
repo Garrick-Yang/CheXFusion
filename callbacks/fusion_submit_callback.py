@@ -1,6 +1,7 @@
 import os
 import zipfile
 import torch
+import time
 import pandas as pd
 from lightning.pytorch.callbacks import BasePredictionWriter
 
@@ -15,15 +16,24 @@ class FusionSubmissonWriter(BasePredictionWriter):
         self.pred_df_path = pred_df_path
 
     def write_on_epoch_end(self, trainer, pl_module, predictions, batch_indices):
+        def add_time_dir(path, time_str):
+            path_add = os.path.join(os.path.dirname(path), time_str)
+            os.makedirs(path_add, exist_ok=True)
+            return os.path.join(path_add, os.path.basename(path))
+
+        time_str = time.strftime('%Y-%m-%d %H_%M_%S', time.localtime(time.time()))
+        self.submission_path = add_time_dir(self.submission_path, time_str)
+        self.submission_zip_path = add_time_dir(self.submission_zip_path, time_str)
+
         # Add predictions
         predictions = torch.cat(predictions, dim=0)
-        torch.save(predictions, "predictions.pt")
+        # torch.save(predictions, "predictions.pt")
 
         submit_df = pd.read_csv(self.sample_submission_path)
         pred_df = pd.read_csv(self.pred_df_path)
         submit_df['study_id'] = pred_df['study_id']
 
-        temp_df = pd.DataFrame(predictions, columns=submit_df.columns[-27:-1])
+        temp_df = pd.DataFrame(predictions, columns=submit_df.columns[-41:-1])
         temp_df['study_id'] = list(pred_df.groupby('study_id').groups.keys())
         submit_df = submit_df.merge(temp_df, on='study_id', how='left', suffixes=('_x', ''))
 

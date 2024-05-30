@@ -41,6 +41,7 @@ class ASLwithClassWeight(nn.Module):
         self.eps = eps
 
     def forward(self, pred, label):
+
         weight = label * self.pos_weights.cuda() + (1 - label) * self.neg_weights.cuda()
 
         # Calculating Probabilities

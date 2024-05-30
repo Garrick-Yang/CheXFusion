@@ -1,0 +1,175 @@
+seed_everything: 42
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  precision: 16-mixed
+  fast_dev_run: false
+  overfit_batches: 0.0
+  val_check_interval: 0.25
+  num_sanity_val_steps: 2
+  accumulate_grad_batches: 1
+  gradient_clip_val: null
+  deterministic: null
+  benchmark: true
+  max_epochs: 50
+
+ckpt_path: /mnt/nvme_share/yangjz/Python/PythonProject/competition/CheXFusion/output/checkpoints/chexmodel-epoch=27-val_loss=0.05.ckpt
+
+writer:
+    init_args:
+        write_interval: epoch
+        sample_submission_path: data/development_task1_sample_submission.csv
+        submission_path: output/save/submission.csv
+        submission_zip_path: output/save/submission.zip
+        submission_code_dir: data/code
+        pred_df_path: data/development.csv
+model:
+  lr: 3e-5
+  classes:
+    - Adenopathy
+    - Atelectasis
+    - Azygos Lobe
+    - Calcification of the Aorta
+    - Cardiomegaly
+    - Clavicle Fracture
+    - Consolidation
+    - Edema
+    - Emphysema
+    - Enlarged Cardiomediastinum
+    - Fibrosis
+    - Fissure
+    - Fracture
+    - Granuloma
+    - Hernia
+    - Hydropneumothorax
+    - Infarction
+    - Infiltration
+    - Kyphosis
+    - Lobar Atelectasis
+    - Lung Lesion
+    - Lung Opacity
+    - Mass
+    - Nodule
+    - Normal
+    - Pleural Effusion
+    - Pleural Other
+    - Pleural Thickening
+    - Pneumomediastinum
+    - Pneumonia
+    - Pneumoperitoneum
+    - Pneumothorax
+    - Pulmonary Embolism
+    - Pulmonary Hypertension
+    - Rib Fracture
+    - Round(ed) Atelectasis
+    - Subcutaneous Emphysema
+    - Support Devices
+    - Tortuous Aorta
+    - Tuberculosis
+
+  loss_init_args:
+    type: asl
+    class_instance_nums:
+      - 1935
+      - 44060
+      - 103
+      - 2266
+      - 47536
+      - 93
+      - 10610
+      - 26506
+      - 2045
+      - 17331
+      - 683
+      - 1579
+      - 6703
+      - 1514
+      - 2251
+      - 394
+      - 454
+      - 5930
+      - 359
+      - 98
+      - 1450
+      - 49435
+      - 3244
+      - 4134
+      - 18776
+      - 45671
+      - 329
+      - 1735
+      - 477
+      - 27025
+      - 369
+      - 9816
+      - 1043
+      - 545
+      - 4995
+      - 82
+      - 1483
+      - 63040
+      - 1832
+      - 1177
+    total_instance_num: 258871
+  timm_init_args:
+    model_name: convnext_small.fb_in22k_ft_in1k
+    pretrained: False
+data:
+  dataloader_init_args:
+    batch_size: 8
+    num_workers: 8
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 4
+  datamodule_cfg:
+    predict_pseudo_label: null #chexpert
+    use_pseudo_label: false #true
+    data_dir: /mnt/nvme_share/zhux/dataset/MIMIC-CXR-JPG/2.0.0
+    train_df_path: data/train_labeled.csv
+    pred_df_path: data/development.csv
+    val_split: 0.1
+    seed: 42
+    size: 1024
+    classes:
+      - Adenopathy
+      - Atelectasis
+      - Azygos Lobe
+      - Calcification of the Aorta
+      - Cardiomegaly
+      - Clavicle Fracture
+      - Consolidation
+      - Edema
+      - Emphysema
+      - Enlarged Cardiomediastinum
+      - Fibrosis
+      - Fissure
+      - Fracture
+      - Granuloma
+      - Hernia
+      - Hydropneumothorax
+      - Infarction
+      - Infiltration
+      - Kyphosis
+      - Lobar Atelectasis
+      - Lung Lesion
+      - Lung Opacity
+      - Mass
+      - Nodule
+      - Normal
+      - Pleural Effusion
+      - Pleural Other
+      - Pleural Thickening
+      - Pneumomediastinum
+      - Pneumonia
+      - Pneumoperitoneum
+      - Pneumothorax
+      - Pulmonary Embolism
+      - Pulmonary Hypertension
+      - Rib Fracture
+      - Round(ed) Atelectasis
+      - Subcutaneous Emphysema
+      - Support Devices
+      - Tortuous Aorta
+      - Tuberculosis

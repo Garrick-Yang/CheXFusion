@@ -120,8 +120,10 @@ class MLDecoder(nn.Module):
         decoder_dropout = 0.1
         num_layers_decoder = 1
         dim_feedforward = 2048
-        layer_decode = TransformerDecoderLayerOptimal(d_model=decoder_embedding,
-                                                      dim_feedforward=dim_feedforward, dropout=decoder_dropout)
+        # layer_decode = TransformerDecoderLayerOptimal(d_model=decoder_embedding,
+        #                                               dim_feedforward=dim_feedforward, dropout=decoder_dropout)
+        layer_decode = nn.TransformerDecoderLayer(d_model=decoder_embedding, nhead=8, dim_feedforward=dim_feedforward,
+                                                    dropout=decoder_dropout)
         self.decoder = nn.TransformerDecoder(layer_decode, num_layers=num_layers_decoder)
         self.decoder.embed_standart = embed_standart
         self.decoder.query_embed = query_embed
@@ -163,6 +165,8 @@ class MLDecoder(nn.Module):
             query_embed = self.decoder.query_embed.weight
         # tgt = query_embed.unsqueeze(1).repeat(1, bs, 1)
         tgt = query_embed.unsqueeze(1).expand(-1, bs, -1)  # no allocation of memory with expand
+        # mask交换维度
+        mask = mask.transpose(0, 1) if mask is not None else None
         h = self.decoder(tgt, embedding_spatial_786.transpose(0, 1), memory_key_padding_mask=mask)  # [embed_len_decoder, batch, 768]
         h = h.transpose(0, 1)
 

@@ -16,6 +16,7 @@ class SubmissonWriter(BasePredictionWriter):
 
     def postprocess(self, submit_df):
         pred_df = pd.read_csv(self.pred_df_path)
+
         submit_df['study_id'] = pred_df['study_id']
 
         submit_df['weight'] = 5
@@ -40,9 +41,9 @@ class SubmissonWriter(BasePredictionWriter):
         # torch.save(predictions, "predictions.pt")
 
         submit_df = pd.read_csv(self.sample_submission_path)
+
         submit_df.iloc[..., 1:] = predictions.float().squeeze(
             0).detach().cpu().numpy()
-
         # Post processing
         submit_df = self.postprocess(submit_df)
 
